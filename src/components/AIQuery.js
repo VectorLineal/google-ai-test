@@ -1,28 +1,41 @@
+import React from 'react';
+import {processText} from "../middleware/GoogleGemini";
+
 class AIQuery extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {value: 'Please write a prompt to send to Google Gemini.'};
+      this.state = {value: '', answer: 'hola'};
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
     }
   
     handleChange(event) {
-        this.setState({value: event.target.value});
+      this.setState({value: event.target.value, answer: ''});
     }
     handleSubmit(event) {
-      alert('An prompt was submitted: ' + this.state.value);
       event.preventDefault();
+      processText(this.state.value).then((text) =>{
+        this.setState({value: this.state.value, answer: text});
+      }, (error)=>{
+        console.log("error:", error);
+      });
     }
   
     render() {
       return (
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Prompt:
-            <textarea value={this.state.value} onChange={this.handleChange} />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
+        <div>
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Prompt:    
+              <textarea value={this.state.value} onChange={this.handleChange} />
+            </label>
+            <div>
+              <input type="submit" value="Submit" />
+            </div>
+          </form>
+          <h1>{this.state.answer}</h1>
+        </div>
+        
       );
     }
   }
